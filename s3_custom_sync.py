@@ -28,14 +28,14 @@ if args.ignore:
     with open(args.ignore, 'r') as f:
         ignore_files = [line.strip() for line in f]
 
-# Function to process a batch of files in parallel
-def process_files(files):
-    # Retrieve metadata for all files in the specified prefix at once
+# Retrieve metadata for all files in the specified prefix at once
     s3_objects = s3.list_objects_v2(Bucket=args.bucket, Prefix=args.prefix)['Contents']
     s3_files = {}
     for obj in s3_objects:
         s3_files[obj['Key']] = obj['LastModified'].replace(tzinfo=None), obj['ETag'].replace('"', '')
-    
+
+# Function to process a batch of files in parallel
+def process_files(files):
     # Check if each file was modified after the specified date and upload if necessary
     for file in files:
         # Check if file should be ignored
